@@ -5,6 +5,16 @@ output:
     keep_md: true
 ---
 
+This Assignment provides a detailed HTML formatted file produced using R Markdown. The data is collected from personal activity monitering device such as Fitbit *etc*. from an anaymous person.The data is collected at 5 minute intervals from the period between October and November 2012.  
+
+The three variables are:
+- Steps: The number of steps taken in the 5 minute intervals.
+- Date: The particlur date the measurements were taken (YYYY-MM-DD).
+- interval: The 5 minute interval (in minutes)
+
+The data is stores as a CSV file and there are 17,568 observations per column.
+
+
 
 ## Loading and preprocessing the data
 
