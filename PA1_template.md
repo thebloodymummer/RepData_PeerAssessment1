@@ -31,9 +31,12 @@ if(!file.exists("Assignemnt")){dir.create("Assignment")}
 ```r
 fileUrl <- "https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip"
 destFile <- "./Assignment/activity.zip"
-download.file(fileUrl, destFile)
+download.file(fileUrl, 
+              destFile)
 unzip(destFile, exdir = "./Assignment")
-activityData <- read.csv("./Assignment/activity.csv", header = TRUE, sep = ",")
+activityData <- read.csv("./Assignment/activity.csv", 
+                         header = TRUE, 
+                         sep = ",")
 ```
 
 Finally, the date is transformed into the class of "Date"
@@ -49,11 +52,8 @@ class(activityData$date)
 
 
 ```r
-activityData$date <- as.Date(activityData$date, format="%Y-%m-%d")
-```
-
-
-```r
+activityData$date <- as.Date(activityData$date, 
+                             format="%Y-%m-%d")
 class(activityData$date)
 ```
 
@@ -68,9 +68,12 @@ Initially, the total number of steps taken each day is calculated.
 
 
 ```r
-totalNumber <- as.data.frame(lapply(split(activityData$steps, activityData$date), sum))
+totalNumber <- as.data.frame(lapply(split(activityData$steps, 
+                                          activityData$date), 
+                                    sum))
 totalNumber <- t(totalNumber)
-totalNumber2 <-data.frame(unique(activityData$date), totalNumber)
+totalNumber2 <-data.frame(unique(activityData$date), 
+                          totalNumber)
 rownames(totalNumber2) <- c()
 colnames(totalNumber2) <- c("Date", "Total Number")
 totalNumber2[complete.cases(totalNumber2), ]
@@ -146,7 +149,7 @@ hist(totalNumber2$`Total Number`,
      xlab = "Total Number of Steps")
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-6-1.png)<!-- -->
+![](PA1_template_files/figure-html/unnamed-chunk-5-1.png)<!-- -->
 
 ### The Mean and Median number of steps taken each day.
 
@@ -154,8 +157,10 @@ The mean and median number of steps taken each day are as follows.
 
 
 ```r
-Mean <- mean(totalNumber, na.rm = TRUE)
-Median <- median(totalNumber, na.rm = TRUE)
+Mean <- mean(totalNumber, 
+             na.rm = TRUE)
+Median <- median(totalNumber, 
+                 na.rm = TRUE)
 cat("The mean is", Mean, "and the median is", Median)
 ```
 
@@ -163,11 +168,38 @@ cat("The mean is", Mean, "and the median is", Median)
 ## The mean is 10766.19 and the median is 10765
 ```
 
-
-
 ## What is the average daily activity pattern?
 
+The average number of steps per 5 minute interval over the 2 months was taken. 
 
+
+```r
+activityData2 <- activityData[complete.cases(activityData$steps),]
+mean1 <- aggregate(steps ~ interval, 
+                   activityData2, 
+                   mean)
+plot(mean1$interval, 
+     mean1$steps, 
+     type = "l", 
+     main = "Average Number of Steps", 
+     xlab = "Interval (minutes)",
+     ylab = "Average Number of Steps",
+     col = "green")
+```
+
+![](PA1_template_files/figure-html/unnamed-chunk-7-1.png)<!-- -->
+
+The 5 minute Interval containing the highest average number of steps was calculated bu the following.
+
+
+```r
+mean1[which.max(mean1$steps),]
+```
+
+```
+##     interval    steps
+## 104      835 206.1698
+```
 
 ## Imputing missing values
 

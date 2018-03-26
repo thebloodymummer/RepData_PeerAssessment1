@@ -84,11 +84,29 @@ Median <- median(totalNumber,
 cat("The mean is", Mean, "and the median is", Median)
 ```
 
-
-
 ## What is the average daily activity pattern?
 
+The average number of steps per 5 minute interval over the 2 months was taken. 
 
+```{r, echo = TRUE}
+activityData2 <- activityData[complete.cases(activityData$steps),]
+mean1 <- aggregate(steps ~ interval, 
+                   activityData2, 
+                   mean)
+plot(mean1$interval, 
+     mean1$steps, 
+     type = "l", 
+     main = "Average Number of Steps", 
+     xlab = "Interval (minutes)",
+     ylab = "Average Number of Steps",
+     col = "green")
+```
+
+The 5 minute Interval containing the highest average number of steps was calculated bu the following.
+
+```{r}
+mean1[which.max(mean1$steps),]
+```
 
 ## Imputing missing values
 
