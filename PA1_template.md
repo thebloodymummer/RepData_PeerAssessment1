@@ -203,23 +203,77 @@ mean1[which.max(mean1$steps),]
 
 ## Imputing missing values
 
-Before processing, the % of missing values was determined.
+The amount of missing values is calculated a follows:
 
 
 ```r
-mean(is.na(activityData))
+sum(is.na(activityData$steps))
 ```
 
 ```
-## [1] 0.04371585
+## [1] 2304
 ```
 
-This is a relatively small amount however these NA values were removed.
+The account for missing valaues, numbers were inserted based on the average for that 5 minute interval. As such a new data set was created containing these values.
 
 
 ```r
-activityData <- activityData[complete.cases(activityData), ]
+imputedAcData <- activityData
+for (i in 1:nrow(imputedAcData)) {
+  if (is.na(imputedAcData$steps[i])) {
+    interval_value <- imputedAcData$interval[i]
+    steps_value <- mean1[
+    mean1$interval == interval_value,]
+    imputedAcData$steps[i] <- steps_value$steps
+  }
+}
 ```
 
+Similar to before, a histogram, the mean and median were calculated.
+
+
+```r
+totalNumber3 <- as.data.frame(lapply(split(imputedAcData$steps, 
+                                           imputedAcData$date), 
+                                     sum))
+totalNumber3 <- t(totalNumber3)
+totalNumber4 <-data.frame(unique(imputedAcData$date), 
+                          totalNumber)
+rownames(totalNumber4) <- c()
+colnames(totalNumber4) <- c("Date", "Total Number")
+head(totalNumber4[complete.cases(totalNumber4), ])
+```
+
+```
+##         Date Total Number
+## 2 2012-10-02          126
+## 3 2012-10-03        11352
+## 4 2012-10-04        12116
+## 5 2012-10-05        13294
+## 6 2012-10-06        15420
+## 7 2012-10-07        11015
+```
+
+```r
+hist(totalNumber4$`Total Number`, 
+     breaks = 10, 
+     col = "green", 
+     main = "Total Number of Steps Taken Each Day",
+     xlab = "Total Number of Steps")
+```
+
+![](PA1_template_files/figure-html/unnamed-chunk-11-1.png)<!-- -->
+
+```r
+Mean2 <- mean(totalNumber3, 
+             na.rm = TRUE)
+Median2 <- median(totalNumber3, 
+                 na.rm = TRUE)
+cat("The mean is", Mean2, "and the median is", Median2, ". Comparing this to the mean (", Mean, ") and the median (" ,Median, ") of the sample containing the missing values, there is not much difference." )
+```
+
+```
+## The mean is 10766.19 and the median is 10766.19 . Comparing this to the mean ( 10766.19 ) and the median ( 10765 ) of the sample containing the missing values, there is not much difference.
+```
 
 ## Are there differences in activity patterns between weekdays and weekends?

@@ -262,11 +262,48 @@ plot(mean1$interval,
 </div>
 <div id="imputing-missing-values" class="section level2">
 <h2>Imputing missing values</h2>
-<p>Before processing, the % of missing values was determined.</p>
-<pre class="r"><code>mean(is.na(activityData))</code></pre>
-<pre><code>## [1] 0.04371585</code></pre>
-<p>This is a relatively small amount however these NA values were removed.</p>
-<pre class="r"><code>activityData &lt;- activityData[complete.cases(activityData), ]</code></pre>
+<p>The amount of missing values is calculated a follows:</p>
+<pre class="r"><code>sum(is.na(activityData$steps))</code></pre>
+<pre><code>## [1] 2304</code></pre>
+<p>The account for missing valaues, numbers were inserted based on the average for that 5 minute interval. As such a new data set was created containing these values.</p>
+<pre class="r"><code>imputedAcData &lt;- activityData
+for (i in 1:nrow(imputedAcData)) {
+  if (is.na(imputedAcData$steps[i])) {
+    interval_value &lt;- imputedAcData$interval[i]
+    steps_value &lt;- mean1[
+    mean1$interval == interval_value,]
+    imputedAcData$steps[i] &lt;- steps_value$steps
+  }
+}</code></pre>
+<p>Similar to before, a histogram, the mean and median were calculated.</p>
+<pre class="r"><code>totalNumber3 &lt;- as.data.frame(lapply(split(imputedAcData$steps, 
+                                           imputedAcData$date), 
+                                     sum))
+totalNumber3 &lt;- t(totalNumber3)
+totalNumber4 &lt;-data.frame(unique(imputedAcData$date), 
+                          totalNumber)
+rownames(totalNumber4) &lt;- c()
+colnames(totalNumber4) &lt;- c(&quot;Date&quot;, &quot;Total Number&quot;)
+head(totalNumber4[complete.cases(totalNumber4), ])</code></pre>
+<pre><code>##         Date Total Number
+## 2 2012-10-02          126
+## 3 2012-10-03        11352
+## 4 2012-10-04        12116
+## 5 2012-10-05        13294
+## 6 2012-10-06        15420
+## 7 2012-10-07        11015</code></pre>
+<pre class="r"><code>hist(totalNumber4$`Total Number`, 
+     breaks = 10, 
+     col = &quot;green&quot;, 
+     main = &quot;Total Number of Steps Taken Each Day&quot;,
+     xlab = &quot;Total Number of Steps&quot;)</code></pre>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<pre class="r"><code>Mean2 &lt;- mean(totalNumber3, 
+             na.rm = TRUE)
+Median2 &lt;- median(totalNumber3, 
+                 na.rm = TRUE)
+cat(&quot;The mean is&quot;, Mean2, &quot;and the median is&quot;, Median2, &quot;. Comparing this to the mean (&quot;, Mean, &quot;) and the median (&quot; ,Median, &quot;) of the sample containing the missing values, there is not much difference.&quot; )</code></pre>
+<pre><code>## The mean is 10766.19 and the median is 10766.19 . Comparing this to the mean ( 10766.19 ) and the median ( 10765 ) of the sample containing the missing values, there is not much difference.</code></pre>
 </div>
 <div id="are-there-differences-in-activity-patterns-between-weekdays-and-weekends" class="section level2">
 <h2>Are there differences in activity patterns between weekdays and weekends?</h2>
