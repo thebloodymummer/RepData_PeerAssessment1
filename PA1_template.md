@@ -277,3 +277,33 @@ cat("The mean is", Mean2, "and the median is", Median2, ". Comparing this to the
 ```
 
 ## Are there differences in activity patterns between weekdays and weekends?
+
+The following plots the average amount of steps for each interval over weekdays and weekends.
+
+
+
+```r
+imputedAcData$weekday <- weekdays(imputedAcData$date, abbreviate = TRUE)
+imputedAcData$weekday <- as.factor(imputedAcData$weekday)
+
+
+levels(imputedAcData$weekday) <- list(weekday = c("Mon", "Tue", "Wed", 
+                                                  "Thu", "Fri"),
+                                      weekend = c("Sat", "Sun"))
+mean2 <- aggregate(imputedAcData$steps, list(as.numeric(imputedAcData$interval),imputedAcData$weekday),        FUN = "mean")
+names(mean2) <- c("interval","day or end", "average steps")
+
+
+meanday <- subset(mean2[mean2$`day or end` %in% "weekday",])
+meanend <- subset(mean2[mean2$`day or end` %in% "weekend",])
+
+par(mfrow=c(2,1), mar=c(3.1,4.1,1.1,2.1))
+with(meanday, plot(`interval`, `average steps`, type = "l"))
+title(main = "Weekdays")
+with(meanend, plot(`interval`, `average steps`, type = "l"))
+title(main = "Weekends")
+```
+
+![](PA1_template_files/figure-html/unnamed-chunk-12-1.png)<!-- -->
+
+It seems the subject is more avtive between 750 and 100 minutes into the weekdays.
